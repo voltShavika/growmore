@@ -10,10 +10,14 @@
   },
   "dependencies": {
     "@next/font": "13.0.7",
+    "axios": "^1.2.1",
+    "bootstrap": "^5.2.3",
     "eslint": "8.29.0",
     "eslint-config-next": "13.0.7",
     "next": "13.0.7",
     "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "react-dom": "18.2.0",
+    "redux": "^4.2.0",
+    "redux-router": "^2.1.2"
   }
 }
