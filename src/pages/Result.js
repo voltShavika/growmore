@@ -1,21 +1,24 @@
-import React, { useContext, useEffect } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import Container from '../components/Container'
 import * as d3 from 'd3';
 import QuizContext from '../Context';
+import axios from 'axios';
+import {useParams} from 'react-router-dom'
 
 export default function Result() {
-    const {scoreHistory} = useContext(QuizContext);
-    const drawChart = () => {
-        const h = 300;
-        const w = 700;
-        const height = 300
-        const width = 400;
+    const {quizId} = useParams();
+    const {scoreHistory, authToken} = useContext(QuizContext);
 
-        const margin = { top: 50, right: 50, bottom: 50, left: 50 };
+    const [quizResult, setQuizResult] = useState(null)
+    const drawChart = (performance) => {
+        const height = 300
+        const width = 500;
+
+        const margin = { top: 10, right: 50, bottom: 10, left: 50 };
         const xMinValue = 0;
         const xMaxValue = 10;
         const yMinValue = 0;
-        const yMaxValue = 100;
+        const yMaxValue = 40;
 
         const svg = d3
             .select('#graph2')
@@ -67,22 +70,51 @@ export default function Result() {
             .call(d3.axisLeft(yScale));
         svg
             .append('path')
-            .datum(scoreHistory)
+            .datum(performance)
             .attr('fill', 'none')
             .attr('stroke', '#f6c3d0')
             .attr('stroke-width', 4)
             .attr('class', 'line') 
             .attr('d', line);
     }
+
     useEffect(()=>{
-        console.log("Hi");
-        console.log(scoreHistory);
-        drawChart();
+        axios.get('http://localhost:8000/quiz/result/'+quizId, {
+            headers: {
+                "auth-token": authToken
+            }
+        }).then(res => {
+            console.log(res.data);
+            setQuizResult(res.data)
+            drawChart(res.data.performance);
+        })
     }, [])
   return (
     <Container>
-        <div className='container'>
-            <div id='graph2'></div>
+        <div className='container mt-5'>
+            <h3>Your performance on Quiz</h3>
+            <hr/>
+            <div className='row'>
+                <div className='col'>
+                    <p>Total Score:</p>
+                    <h2>{quizResult && quizResult.totalScore}</h2>
+                    <p>Questions attempted:</p>
+                    <h4>{quizResult && quizResult.performance.length}</h4>
+                    <p>Results Streak:</p>
+                    {
+                        quizResult && quizResult.performance.map((history, i) => {
+                            return (
+                                history.result
+                                ?<button className='btn btn-lg btn-success ms-2' key={i}>{history.questionNumber}</button>
+                                :<button className='btn btn-lg btn-danger ms-2' key={i}>{history.questionNumber}</button>
+                            )
+                        })
+                    }
+                </div>
+                <div className='col'>
+                    <div id='graph2'></div>
+                </div>
+            </div>
         </div>
     </Container>
   )

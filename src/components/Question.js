@@ -1,10 +1,12 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import QuizContext from '../Context';
-import {useNavigate} from 'react-router-dom';
+import {useNavigate, useParams} from 'react-router-dom';
+import axios from 'axios';
 
 export default function Question({question}) {
 
-    const {currentLevel, setCurrentLevel, questionNumber, setQuestionNumber, score, setScore, scoreHistory, setScoreHistory, levelWiseQuestions} = useContext(QuizContext);
+    const {quizId} = useParams();
+    const {authToken, currentLevel, setCurrentLevel, questionNumber, setQuestionNumber, score, setScore, scoreHistory, setScoreHistory, levelWiseQuestions} = useContext(QuizContext);
 
     const [op1Check, setOp1Check] = useState(false);
     const [op2Check, setOp2Check] = useState(false);
@@ -105,7 +107,18 @@ export default function Question({question}) {
         setScoreHistory([...scoreHistory, {questionNumber: questionNumber, score: score, result: result}])
         // Quiz End Logic
         if(questionNumber == 10 || (currentLevel == 1 && result == false) || (currentLevel == 10 && result == true)){
-            navigate("/result");
+            axios.post('http://localhost:8000/quiz/result/'+quizId, {
+                performance: scoreHistory,
+                totalScore: score
+            },{
+                headers: {
+                    "auth-token": authToken
+                }
+            }).then(res => {
+                console.log(res.data);
+                navigate("/result/"+quizId);
+            })
+            
         }
         else{
             setQuestionNumber(questionNumber + 1);

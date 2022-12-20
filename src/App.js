@@ -50,7 +50,7 @@ function App() {
         <Routes>
           <Route exact path="/dashboard" element={<Dashboard/>}></Route>
           <Route exact path="/quiz/:quizId" element={<Quiz/>}></Route>
-          <Route exact path="/result" element={<Result/>}></Route>
+          <Route exact path="/result/:quizId" element={<Result/>}></Route>
         </Routes>
       </Router>
 
