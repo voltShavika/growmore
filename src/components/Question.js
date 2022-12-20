@@ -2,9 +2,9 @@ import React, { useContext, useEffect, useRef, useState } from 'react'
 import QuizContext from '../Context';
 import {useNavigate} from 'react-router-dom';
 
-export default function Question({data}) {
+export default function Question({question}) {
 
-    const {currentLevel,setCurrentLevel, questionNumber, setQuestionNumber, score, setScore, scoreHistory, setScoreHistory} = useContext(QuizContext);
+    const {currentLevel, setCurrentLevel, questionNumber, setQuestionNumber, score, setScore, scoreHistory, setScoreHistory, levelWiseQuestions} = useContext(QuizContext);
 
     const [op1Check, setOp1Check] = useState(false);
     const [op2Check, setOp2Check] = useState(false);
@@ -13,13 +13,9 @@ export default function Question({data}) {
 
     const navigate = useNavigate();
 
-    useEffect(() => {
-        console.log("Updated");
-    }, [])
-
     const handleOptionChange = (e, option) => {
     
-        if(data.questionType === 'single'){
+        if(question.questionType === 'single'){
             switch(option){
                 case "1":
                     setOp1Check(!op1Check);
@@ -95,7 +91,7 @@ export default function Question({data}) {
         if(op4Check){
             answers.push(4);
         }
-        const result = checkAnswer(answers, data.answers);
+        const result = checkAnswer(answers, question.answers);
         let newScore = score;
         if(result){
             setCurrentLevel(currentLevel + 1);
@@ -106,7 +102,7 @@ export default function Question({data}) {
             newScore = newScore - 2;
         }
         setScore(newScore)
-        setScoreHistory([...scoreHistory, {questionNumber: questionNumber, score: score}])
+        setScoreHistory([...scoreHistory, {questionNumber: questionNumber, score: score, result: result}])
         // Quiz End Logic
         if(questionNumber == 10 || (currentLevel == 1 && result == false) || (currentLevel == 10 && result == true)){
             navigate("/result");
@@ -122,50 +118,52 @@ export default function Question({data}) {
     }
 
     return (
-        <div>
-            <div className='text-center'>
-                <h2>Q{questionNumber}: {data.question}</h2>
-                <span className='badge bg-primary'>{data.questionType}</span>
-                <span className='badge bg-danger ms-2'>Level {currentLevel}</span>
+        <> 
+            <div>
+                <div className='text-center'>
+                    <h3>Q{questionNumber}: {question.question}</h3>
+                    <span className='badge bg-primary'>{question.questionType}</span>
+                    <span className='badge bg-danger ms-2'>Level {currentLevel}</span>
+                </div>
+                
+                <div className='row mt-5'>
+                    <div className='col-md-6 mb-3'>
+                        <div className='card p-3'>
+                            <div className="form-check form-check-inline">
+                                <input className="form-check-input" type="checkbox" value="1" checked={op1Check} onChange={(e) => handleOptionChange(e, "1")} />
+                                <label className="form-check-label">{question.option1}</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div className='col-md-6 mb-3'>
+                        <div className='card p-3'>
+                            <div className="form-check form-check-inline">
+                                <input className="form-check-input" type="checkbox" value="2"  checked={op2Check} onChange={(e) => handleOptionChange(e, "2")} />
+                                <label className="form-check-label">{question.option2}</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div className='col-md-6 mb-3'>
+                        <div className='card p-3'>
+                            <div className="form-check form-check-inline">
+                                <input className="form-check-input" type="checkbox" value="3"  checked={op3Check} onChange={(e) => handleOptionChange(e, "3")} />
+                                <label className="form-check-label">{question.option3}</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div className='col-md-6 mb-3'>
+                        <div className='card p-3'>
+                            <div className="form-check form-check-inline">
+                                <input className="form-check-input" type="checkbox" value="4"  checked={op4Check} onChange={(e) => handleOptionChange(e, "4")} />
+                                <label className="form-check-label">{question.option4}</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div className='text-center'>
+                    <button className='btn btn-primary' onClick={handleSubmit}>Submit</button>
+                </div>
             </div>
-            
-            <div className='row mt-5'>
-                <div className='col-md-6 mb-3'>
-                    <div className='card p-3'>
-                        <div className="form-check form-check-inline">
-                            <input className="form-check-input" type="checkbox" value="1" checked={op1Check} onChange={(e) => handleOptionChange(e, "1")} />
-                            <label className="form-check-label">{data.option1}</label>
-                        </div>
-                    </div>
-                </div>
-                <div className='col-md-6 mb-3'>
-                    <div className='card p-3'>
-                        <div className="form-check form-check-inline">
-                            <input className="form-check-input" type="checkbox" value="2"  checked={op2Check} onChange={(e) => handleOptionChange(e, "2")} />
-                            <label className="form-check-label">{data.option2}</label>
-                        </div>
-                    </div>
-                </div>
-                <div className='col-md-6 mb-3'>
-                    <div className='card p-3'>
-                        <div className="form-check form-check-inline">
-                            <input className="form-check-input" type="checkbox" value="3"  checked={op3Check} onChange={(e) => handleOptionChange(e, "3")} />
-                            <label className="form-check-label">{data.option3}</label>
-                        </div>
-                    </div>
-                </div>
-                <div className='col-md-6 mb-3'>
-                    <div className='card p-3'>
-                        <div className="form-check form-check-inline">
-                            <input className="form-check-input" type="checkbox" value="4"  checked={op4Check} onChange={(e) => handleOptionChange(e, "4")} />
-                            <label className="form-check-label">{data.option4}</label>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div className='text-center'>
-                <button className='btn btn-primary' onClick={handleSubmit}>Submit</button>
-            </div>
-        </div>
+        </>
     )
 }
