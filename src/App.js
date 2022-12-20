@@ -8,16 +8,18 @@ import {
 } from 'react-router-dom'
 import Quiz from './pages/Quiz';
 import Result from './pages/Result';
+import Dashboard from './pages/Dashboard';
 
 function App() {
   const [user, setUser] = useState(null);
+  const [loginStatus, setLoginStatus] = useState(false);
+  const [authToken, setAuthToken] = useState("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2M2ExYzVkNGUyZmUwYTNlOGU4Yzc1NjEiLCJpYXQiOjE2NzE1NDY3MDB9.Dwmimq4mfcyTTSO9H39Vf5-0zf1kRb3E3ZB_veSAmAo");
   const [currentLevel, setCurrentLevel] = useState(5);
   const [questionNumber, setQuestionNumber] = useState(1);
   const [score, setScore] = useState(0);
   const [scoreHistory, setScoreHistory] = useState([]);
   const [question, setQuestion] = useState(null);
-  const [loginStatus, setLoginStatus] = useState(false);
-  const [token, setToken] = useState("");
+
 
   const login = () => {
 
@@ -28,7 +30,9 @@ function App() {
   }
   return (
     <QuizContext.Provider value={{
-      user: user,  
+      user: user, 
+      loginStatus: loginStatus,
+      authToken: authToken,
       currentLevel: currentLevel,
       setCurrentLevel: setCurrentLevel,
       questionNumber: questionNumber,
@@ -42,6 +46,7 @@ function App() {
     }}>
       <Router>
         <Routes>
+          <Route exact path="/dashboard" element={<Dashboard/>}></Route>
           <Route exact path="/quiz" element={<Quiz/>}></Route>
           <Route exact path="/result" element={<Result/>}></Route>
         </Routes>
