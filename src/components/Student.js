@@ -4,25 +4,36 @@ import axios from 'axios'
 
 import Container from './Container'
 import QuizContext from '../Context';
-import { API_GET_STUDENT_QUIZES } from '../api';
+import { API_GET_ALL_QUIZ_RESULTS, API_GET_STUDENT_QUIZES } from '../api';
 
 export default function Student() {
     const {loginStatus, user, authToken} = useContext(QuizContext);
     const [quizes, setQuizes] = useState([])
+    const [results, setResults] = useState([])
     useEffect(()=> {
         axios.get(API_GET_STUDENT_QUIZES,{
             headers: {
                 "auth-token": authToken
             }
         }).then(res => {
-            console.log(res.data);
+            // console.log(res.data);
             setQuizes([...res.data])
+        })
+
+        axios.get(API_GET_ALL_QUIZ_RESULTS,{
+            headers: {
+                "auth-token": authToken
+            }
+        }).then(res => {
+            // console.log(res.data);
+            setResults([...res.data])
         })
 
   }, [])
   return (
-    <div className='container'>
-        <h3>My Attempts</h3>
+    <div className='container p-3' style={{height: "100vh"}}>
+        <h3>Attempt New Quiz</h3>
+        <hr/>
         {
             quizes.length > 0 &&
             <ul>
@@ -36,6 +47,21 @@ export default function Student() {
                 }
             </ul>
         }
+        <h3>Your Recent Scores</h3>
+        {
+            quizes.length > 0 &&
+            <ul>
+                {
+                    results.map((result, i) => {
+                        return (
+                        <li key={i}>
+                            <Link to={"/result/"+result.quiz} className="btn btn-info">Result {i+1}</Link>
+                        </li>)
+                    })
+                }
+            </ul>
+        }
     </div>
   )
 }
+

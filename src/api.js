@@ -11,3 +11,4 @@ export const API_GENERATE_QUIZ = host + "/quiz/generate";
 export const API_GET_QUIZ_QUESTIONS = host + "/quiz/";
 export const API_POST_QUIZ_RESULT = host + "/quiz/result/";
 export const API_GET_QUIZ_RESULT = host + "/quiz/result/";
+export const API_GET_ALL_QUIZ_RESULTS = host + "/users/results/";
