@@ -1,7 +1,11 @@
 import axios from 'axios';
 import React,{useRef, useState, useEffect} from 'react'
+import { useContext } from 'react';
+import { API_ADD_QUESTION } from '../api';
+import QuizContext from '../Context';
 
 export default function AddQuestion({addQuestionCallback}) {
+    const {authToken} = useContext(QuizContext);
     const questionRef = useRef();
     const op1Ref = useRef();
     const op2Ref = useRef();
@@ -21,7 +25,7 @@ export default function AddQuestion({addQuestionCallback}) {
         const questionType = typeRef.current.value;
         const answers = answerRef.current.value.split(",").map((v) => parseInt(v))
 
-        axios.post('http://localhost:8000/questions/add', {
+        axios.post(API_ADD_QUESTION, {
             question: question,
             level: parseInt(level),
             option1: op1,
@@ -32,7 +36,7 @@ export default function AddQuestion({addQuestionCallback}) {
             questionType: questionType
         }, {
             headers: {
-                "auth-token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2M2ExYzVkNGUyZmUwYTNlOGU4Yzc1NjEiLCJpYXQiOjE2NzE1NDY3MDB9.Dwmimq4mfcyTTSO9H39Vf5-0zf1kRb3E3ZB_veSAmAo"
+                "auth-token": authToken
             }
         }).then(res => {
             addQuestionCallback(res.data)

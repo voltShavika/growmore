@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useRef, useState } from 'react'
 import QuizContext from '../Context';
 import {useNavigate, useParams} from 'react-router-dom';
 import axios from 'axios';
+import { API_POST_QUIZ_RESULT } from '../api';
 
 export default function Question({question}) {
 
@@ -107,9 +108,9 @@ export default function Question({question}) {
         setScoreHistory([...scoreHistory, {questionNumber: questionNumber, score: score, result: result}])
         // Quiz End Logic
         if(questionNumber == 10 || (currentLevel == 1 && result == false) || (currentLevel == 10 && result == true)){
-            axios.post('http://localhost:8000/quiz/result/'+quizId, {
-                performance: scoreHistory,
-                totalScore: score
+            axios.post(API_POST_QUIZ_RESULT+quizId, {
+                performance: [...scoreHistory, {questionNumber: questionNumber, score: score, result: result}],
+                totalScore: newScore
             },{
                 headers: {
                     "auth-token": authToken

@@ -1,6 +1,7 @@
 import axios from 'axios';
 import React, { useContext, useEffect, useState } from 'react'
 import {Link} from 'react-router-dom'
+import { API_GENERATE_QUIZ, API_GET_ADMIN_QUIZES, API_GET_QUESTION_BANK } from '../api';
 import QuizContext from '../Context';
 import AddQuestion from './AddQuestion';
 
@@ -10,14 +11,14 @@ export default function Admin() {
     const [quizes, setQuizes] = useState([]);
     const [selectedQuestions, setSelectedQuestions] = useState([]);
     useEffect(()=> {
-        axios.get('http://localhost:8000/questions/', {
+        axios.get(API_GET_QUESTION_BANK, {
             headers: {
                 "auth-token": authToken
             }
         }).then(res => {
             setQuestions([...res.data])
         })
-        axios.get('http://localhost:8000/quiz/', {
+        axios.get(API_GET_ADMIN_QUIZES, {
             headers: {
                 "auth-token": authToken
             }
@@ -39,7 +40,7 @@ export default function Admin() {
         }
     }
     const handleGenerateQuiz = () => {
-        axios.post('http://localhost:8000/quiz/generate',{
+        axios.post(API_GENERATE_QUIZ,{
             questions: selectedQuestions
         },{
             headers: {
@@ -55,7 +56,7 @@ export default function Admin() {
 
     }
   return (
-    <div className='container'>
+    <div className='container p-3'>
        <div className='row'>
             <div className='col-md-8'>
                 <h3>Add a Question</h3>

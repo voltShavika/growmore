@@ -3,22 +3,23 @@ import Container from '../components/Container'
 import * as d3 from 'd3';
 import QuizContext from '../Context';
 import axios from 'axios';
-import {useParams} from 'react-router-dom'
+import {useParams, Navigate} from 'react-router-dom'
+import { API_GET_QUIZ_QUESTIONS, API_GET_QUIZ_RESULT } from '../api';
 
 export default function Result() {
     const {quizId} = useParams();
-    const {scoreHistory, authToken} = useContext(QuizContext);
+    const {scoreHistory, authToken, loginStatus} = useContext(QuizContext);
 
     const [quizResult, setQuizResult] = useState(null)
     const drawChart = (performance) => {
         const height = 300
         const width = 500;
 
-        const margin = { top: 10, right: 50, bottom: 10, left: 50 };
+        const margin = { top: 50, right: 50, bottom: 50, left: 50 };
         const xMinValue = 0;
         const xMaxValue = 10;
-        const yMinValue = 0;
-        const yMaxValue = 40;
+        const yMinValue = Math.min(...performance.map(item => item.score));
+        const yMaxValue = Math.max(...performance.map(item => item.score));
 
         const svg = d3
             .select('#graph2')
@@ -35,7 +36,7 @@ export default function Result() {
         const yScale = d3
             .scaleLinear()
             .range([height, 0])
-            .domain([0, yMaxValue]);
+            .domain([yMinValue, yMaxValue]);
         const line = d3
             .line()
             .x(d => xScale(d.questionNumber))
@@ -79,7 +80,7 @@ export default function Result() {
     }
 
     useEffect(()=>{
-        axios.get('http://localhost:8000/quiz/result/'+quizId, {
+        axios.get(API_GET_QUIZ_RESULT+quizId, {
             headers: {
                 "auth-token": authToken
             }
@@ -91,7 +92,10 @@ export default function Result() {
     }, [])
   return (
     <Container>
-        <div className='container mt-5'>
+        {
+            !loginStatus && <Navigate to="/" />
+        }
+        <div className='container p-5' style={{height: "100vh"}}>
             <h3>Your performance on Quiz</h3>
             <hr/>
             <div className='row'>

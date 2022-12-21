@@ -1,13 +1,14 @@
 import axios from 'axios';
 import React, { useContext, useEffect, useState } from 'react'
-import {useParams} from 'react-router-dom'
+import {useParams, Navigate} from 'react-router-dom'
+import { API_GET_QUIZ_QUESTIONS } from '../api';
 import Container from '../components/Container'
 import Question from '../components/Question'
 import QuizContext from '../Context'
 
 export default function Quiz() {
     const {quizId} = useParams();
-    const {authToken, currentLevel, setCurrentLevel, levelWiseQuestions, setLevelWiseQuestions, score, scoreHistory} = useContext(QuizContext);
+    const {loginStatus, authToken, currentLevel, setCurrentLevel, levelWiseQuestions, setLevelWiseQuestions, score, scoreHistory} = useContext(QuizContext);
     const [question, setQuestion] = useState(null);
 
     const convertToLevelWise = (questions) => {
@@ -23,7 +24,7 @@ export default function Quiz() {
 
 
     useEffect(()=> {
-        axios.get(`http://localhost:8000/quiz/${quizId}`,{
+        axios.get(API_GET_QUIZ_QUESTIONS + quizId,{
             headers: {
                 "auth-token": authToken
             }
@@ -49,7 +50,10 @@ export default function Quiz() {
 
     return (
     <Container>
-        <div className='container'>
+        {
+            !loginStatus && <Navigate to="/" />
+        }
+        <div className='container p-3'>
             {
                 question && 
                 <Question question={question}/>
