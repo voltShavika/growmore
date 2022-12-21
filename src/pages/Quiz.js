@@ -53,14 +53,15 @@ export default function Quiz() {
         {
             !loginStatus && <Navigate to="/" />
         }
-        <div className='container p-3'>
+        <div className='container p-3' style={{height: "100vh"}}>
             {
                 question && 
                 <Question question={question}/>
             }
             <div className='text-center mt-5'>
-                <h1>{score}</h1>
+                <h3>Your Score: {score}</h3>
                 <div>
+                    Streak: 
                     {
                         scoreHistory.map((history, i) => {
                             return (

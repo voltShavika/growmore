@@ -3,9 +3,13 @@ import React,{useRef, useState, useEffect} from 'react'
 import { useContext } from 'react';
 import { API_ADD_QUESTION } from '../api';
 import QuizContext from '../Context';
+import FormErrors from './FormErrors';
+import LoadingButton from './LoadingButton';
 
 export default function AddQuestion({addQuestionCallback}) {
     const {authToken} = useContext(QuizContext);
+    const [loading, setLoading] = useState(false);
+    const [errors, setErrors] = useState([]);
     const questionRef = useRef();
     const op1Ref = useRef();
     const op2Ref = useRef();
@@ -14,6 +18,17 @@ export default function AddQuestion({addQuestionCallback}) {
     const levelRef = useRef();
     const typeRef = useRef();
     const answerRef = useRef()
+
+    const resetInputs = () => {
+        questionRef.current.value = ""
+        op1Ref.current.value = ""
+        op2Ref.current.value = ""
+        op3Ref.current.value = ""
+        op4Ref.current.value = ""
+        levelRef.current.value = "1"
+        typeRef.current.value = "single"
+        answerRef.current.value = ""
+    }
 
     const handleAddQuestion = () => {
         const question = questionRef.current.value;
@@ -25,6 +40,7 @@ export default function AddQuestion({addQuestionCallback}) {
         const questionType = typeRef.current.value;
         const answers = answerRef.current.value.split(",").map((v) => parseInt(v))
 
+        setLoading(true);
         axios.post(API_ADD_QUESTION, {
             question: question,
             level: parseInt(level),
@@ -39,11 +55,20 @@ export default function AddQuestion({addQuestionCallback}) {
                 "auth-token": authToken
             }
         }).then(res => {
+            setLoading(false);
+            setErrors([]);
+            resetInputs();
             addQuestionCallback(res.data)
+        }).catch(e => {
+            setLoading(false);
+            console.log(e.response);
+            setErrors([...e.response.data.errors]);
+            
         })
     }
   return (
     <>
+        <FormErrors errors={errors} />
         <div className='row'>
             <div className='col-md-3'>
                 <label>Question: </label>
@@ -86,9 +111,7 @@ export default function AddQuestion({addQuestionCallback}) {
                 </select>
             </div>
         </div>
-        <div className='text-center mt-3'>
-            <button className='btn btn-primary' onClick={handleAddQuestion}>Add Question</button>
-        </div>
+        <LoadingButton text="Add Question" loading={loading} handleClick={handleAddQuestion} />
     </>
   )
 }

@@ -4,12 +4,16 @@ import {Link} from 'react-router-dom'
 import { API_GENERATE_QUIZ, API_GET_ADMIN_QUIZES, API_GET_QUESTION_BANK } from '../api';
 import QuizContext from '../Context';
 import AddQuestion from './AddQuestion';
+import FormErrors from './FormErrors';
+import LoadingButton from './LoadingButton';
 
 export default function Admin() {
     const {loginStatus, authToken} = useContext(QuizContext);
     const [questions, setQuestions] = useState([]);
     const [quizes, setQuizes] = useState([]);
     const [selectedQuestions, setSelectedQuestions] = useState([]);
+    const [loading, SetLoading] = useState(false);
+    const [errors, setErrors] = useState([]);
     useEffect(()=> {
         axios.get(API_GET_QUESTION_BANK, {
             headers: {
@@ -40,15 +44,28 @@ export default function Admin() {
         }
     }
     const handleGenerateQuiz = () => {
-        axios.post(API_GENERATE_QUIZ,{
-            questions: selectedQuestions
-        },{
-            headers: {
-                "auth-token": authToken
-            }
-        }).then(res => {
-            setQuizes([...quizes, res.data])
-        })
+        if(selectedQuestions.length < 10){
+            setErrors(["Please select atleast 10 questions"])
+        }
+        else{
+            SetLoading(true);
+            axios.post(API_GENERATE_QUIZ,{
+                questions: selectedQuestions
+            },{
+                headers: {
+                    "auth-token": authToken
+                }
+            }).then(res => {
+                SetLoading(false);
+                setErrors([]);
+                setQuizes([...quizes, res.data])
+            }).catch(e => {
+                SetLoading(false);
+                setErrors(["Something went wrong"])
+                console.log(e.response);
+            })
+        }
+        
     }
 
     const addQuestionCallback = (newQuestion) => {
@@ -101,9 +118,10 @@ export default function Admin() {
                     <li>After selecting Click on the button below</li>
                     <li>A Quiz will be generated and will be show here</li>
                 </ul>
+                <FormErrors errors={errors} />
                 <div className="text-center">
                     <button className='btn btn-info'>Questions selected: {selectedQuestions.length}</button>
-                    <button className='btn btn-warning ms-2' onClick={handleGenerateQuiz}>Generate Quiz</button>
+                    <LoadingButton text="Genearate Quiz" loading={loading} handleClick={handleGenerateQuiz} />
                 </div>
                 <hr/>
                 <h3>Generated Quizes</h3>

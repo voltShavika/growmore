@@ -1,5 +1,5 @@
-// const host = "http://localhost"
-const host = "https://growmore.onrender.com"
+const host = "http://localhost"
+// const host = "https://growmore.onrender.com"
 
 export const API_LOGIN = host + "/users/login";
 export const API_SIGNUP = host + "/users/signup";

@@ -4,6 +4,8 @@ import Container from '../components/Container'
 import { API_LOGIN, API_SIGNUP } from '../api'
 import axios from 'axios';
 import QuizContext from '../Context';
+import FormErrors from '../components/FormErrors';
+import LoadingButton from '../components/LoadingButton';
 
 export default function Home() {
     const {login} = useContext(QuizContext);
@@ -66,16 +68,7 @@ export default function Home() {
             <div className='row'>
                 <div className='col'>
                     <div className='card p-5'>
-                        {
-                            loginErrors.length > 0 && 
-                            <div className='alert alert-danger'>
-                                <ul>
-                                    {
-                                        loginErrors.map((e, i) => <li key={i}>{e}</li>)
-                                    }
-                                </ul>
-                            </div>
-                        }
+                        <FormErrors errors={loginErrors} />
                         <div className='row'>
                             <div className='col-md-3'>
                                 <label>Email</label>
@@ -92,34 +85,15 @@ export default function Home() {
                                 <input type="password" className="form-control" ref={loginPasswordRef} />
                             </div>
                         </div>
-                        {
-                            loginLoading ? 
-                            <div className='text-center mt-3'>
-                                <div className="spinner-border text-success" role="status">
-                                    <span className="visually-hidden">Loading...</span>
-                                </div>
-                            </div> 
-                            :
-                            <div className='text-center mt-3'>
-                                <button className='btn btn-primary' onClick={handleLogin}>Login</button>
-                            </div>
-                        }
+                        <LoadingButton text="Login" loading={loginLoading} handleClick={handleLogin} />
                         
                     </div>
                     <div className='text-center'>
                         <hr/>
                     </div>
                     <div className='card p-5 mt-3'>
-                        {
-                            signupErrors.length > 0 && 
-                            <div className='alert alert-danger'>
-                                <ul>
-                                    {
-                                        signupErrors.map((e, i) => <li key={i}>{e}</li>)
-                                    }
-                                </ul>
-                            </div>
-                        }
+                        <FormErrors errors={signupErrors} />
+            
                         <div className='row'>
                             <div className='col-md-3'>
                                 <label>Name</label>
@@ -155,18 +129,7 @@ export default function Home() {
                                 <input type="password" className="form-control" ref={signupPasswordRef} />
                             </div>
                         </div>
-                        {
-                            signupLoading ? 
-                            <div className='text-center mt-3'>
-                                <div className="spinner-border text-success" role="status">
-                                    <span className="visually-hidden">Loading...</span>
-                                </div>
-                            </div> 
-                            :
-                            <div className='text-center mt-3'>
-                                <button className='btn btn-primary' onClick={handleSignup}>Signup</button>
-                            </div>
-                        }
+                        <LoadingButton text="Signup" loading={signupLoading} handleClick={handleSignup} />
                     </div>
                 </div>
                 <div className='col'>

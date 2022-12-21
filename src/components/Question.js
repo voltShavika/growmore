@@ -133,11 +133,11 @@ export default function Question({question}) {
 
     return (
         <> 
-            <div>
+            <div className='mt-5'>
                 <div className='text-center'>
-                    <h3>Q{questionNumber}: {question.question}</h3>
-                    <span className='badge bg-primary'>{question.questionType}</span>
-                    <span className='badge bg-danger ms-2'>Level {currentLevel}</span>
+                    <h2>Q{questionNumber}: {question.question}</h2>
+                    <h5><span className='badge bg-primary'>{question.questionType}</span> <span className='badge bg-danger ms-2'>Level {currentLevel}</span></h5>
+                    
                 </div>
                 
                 <div className='row mt-5'>
@@ -174,7 +174,7 @@ export default function Question({question}) {
                         </div>
                     </div>
                 </div>
-                <div className='text-center'>
+                <div className='text-center mt-5'>
                     <button className='btn btn-primary' onClick={handleSubmit}>Submit</button>
                 </div>
             </div>
