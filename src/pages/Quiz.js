@@ -8,7 +8,7 @@ import QuizContext from '../Context'
 
 export default function Quiz() {
     const {quizId} = useParams();
-    const {loginStatus, authToken, currentLevel, setCurrentLevel, levelWiseQuestions, setLevelWiseQuestions, score, scoreHistory, setScoreHistory} = useContext(QuizContext);
+    const {loginStatus, authToken, currentLevel, setCurrentLevel, levelWiseQuestions, setLevelWiseQuestions, score, scoreHistory, setScoreHistory, setQuestionNumber, setScore} = useContext(QuizContext);
     const [question, setQuestion] = useState(null);
 
     const convertToLevelWise = (questions) => {
