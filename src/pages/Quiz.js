@@ -8,7 +8,7 @@ import QuizContext from '../Context'
 
 export default function Quiz() {
     const {quizId} = useParams();
-    const {loginStatus, authToken, currentLevel, setCurrentLevel, levelWiseQuestions, setLevelWiseQuestions, score, scoreHistory} = useContext(QuizContext);
+    const {loginStatus, authToken, currentLevel, setCurrentLevel, levelWiseQuestions, setLevelWiseQuestions, score, scoreHistory, setScoreHistory} = useContext(QuizContext);
     const [question, setQuestion] = useState(null);
 
     const convertToLevelWise = (questions) => {
@@ -22,6 +22,12 @@ export default function Quiz() {
         return levelWiseQuestions
     }
 
+    const resetQuizParams = () => {
+        setQuestionNumber(1);
+        setCurrentLevel(5);
+        setScoreHistory([]);
+        setScore(0);
+    }
 
     useEffect(()=> {
         axios.get(API_GET_QUIZ_QUESTIONS + quizId,{
@@ -31,7 +37,7 @@ export default function Quiz() {
         }).then(res => {
             const levelWiseQuestions = convertToLevelWise(res.data.questions);
             setLevelWiseQuestions({...levelWiseQuestions});
-            setCurrentLevel(5);
+            resetQuizParams();
         })
     }, [])
 
